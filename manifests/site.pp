@@ -1,18 +1,7 @@
 node default {
-  exec {'docker-curl':
-    command => 'curl -L https://get.docker.com -o /tmp/get-docker.sh',
-    path    => '/usr/bin',
-    creates => '/tmp/get-docker.sh'
-  }
-
-  ~> exec {'docker-bash':
-    command => 'sh /tmp/get-docker.sh',
-    path    => ['/bin', '/usr/bin']
-  }
-
-  -> exec {'docker-users':
-    command => 'usermod -aG docker crichmond',
-    path    => '/usr/sbin'
+  class {'docker':
+    version      => 'latest',
+    docker_users => ['crichmond']
   }
 
   class {'docker::compose':
@@ -21,7 +10,7 @@ node default {
   }
 
   exec {'vscode-curl':
-    command => "curl -o /tmp/code.deb -L 'http://go.microsoft.com/fwlink/?LinkID=760868'",
+    command => 'curl -o /tmp/code.deb -L "http://go.microsoft.com/fwlink/?LinkID=760868"',
     path    => '/usr/bin'
   }
 
@@ -29,5 +18,16 @@ node default {
     ensure   => latest,
     provider => dpkg,
     source   => '/tmp/code.deb'
+  }
+
+  exec {'chrome-curl':
+    command => 'curl -o /tmp/chrome.deb -L "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"',
+    path    => '/usr/bin'
+  }
+
+  -> package {'chrome-dpkg':
+    ensure   => latest,
+    provider => dpkg,
+    source   => '/tmp/chrome.deb'
   }
 }
