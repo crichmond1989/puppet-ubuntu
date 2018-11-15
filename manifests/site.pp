@@ -30,4 +30,6 @@ node default {
     provider => dpkg,
     source   => '/tmp/chrome.deb'
   }
+
+  class { 'nodejs': }
 }
